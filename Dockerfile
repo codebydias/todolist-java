@@ -10,8 +10,10 @@ COPY . .
 RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
 RUN mvn clean install
 
-EXPOSE 8080
 
-COPY --from=build /target/todolist-1.0.0.jar app.jar
+WORKDIR /app
+COPY --from=build /app/target/todolist-1.0.0.jar app.jar
+
+EXPOSE 8080
 
 ENTRYPOINT [ "java", "-jar", "app.jar" ]
