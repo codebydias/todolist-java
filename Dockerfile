@@ -3,9 +3,11 @@ FROM ubuntu:latest AS build
 RUN apt-get update
 RUN apt-get install openjdk-17-jdk -y
 
+FROM eclipse-temurin:17-jdk-jammy
+
 COPY . .
 
-RUN apt-get install maven -y
+RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
 RUN mvn clean install
 
 EXPOSE 8080
