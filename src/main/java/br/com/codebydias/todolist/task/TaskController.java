@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import br.com.codebydias.todolist.utils.Utils;
 
 @RestController
@@ -33,6 +32,7 @@ public class TaskController {
         var currentDate = LocalDateTime.now();
         // currentDate = data atual
         // data que começa a task
+
         if (currentDate.isAfter(taskModel.getStartAt()) || currentDate.isAfter(taskModel.getEndAt())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("A data de inicio / data de término deve ser maior que a data atual");
@@ -55,14 +55,33 @@ public class TaskController {
     }
 
     @PutMapping("/update/{id}")
-    public TaskModel update(@RequestBody TaskModel taskModel, @PathVariable UUID id, HttpServletRequest request) {
+    public ResponseEntity update(@RequestBody TaskModel taskModel, @PathVariable UUID id, HttpServletRequest request) {
+
+        var task = this.taskRepository.findById(id).orElse(null);
+
+        if (task == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Tarefa não encontrada");
+
+        }
+
         var idUser = request.getAttribute("idUser");
-        this.taskRepository.findById(id);
+
+        if (!task.getIdUser().equals(idUser)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Você não tem permissão para alterar essa tarefa");
+
+        } else {
+        }
+
         Utils.copyNoNullProperties(taskModel, task);
-        System.out.println("IdUser" + idUser);
-        taskModel.setIdUser((UUID) idUser);
-        taskModel.setId(id);
-        return this.taskRepository.save(taskModel);
+        var taskUpdated = this.taskRepository.save(task);
+
+        return ResponseEntity.ok().body(this.taskRepository.save(taskUpdated));
+
+        // System.out.println("IdUser" + idUser);
+        // taskModel.setIdUser((UUID) idUser);
+        // taskModel.setId(id);
     }
 
 }

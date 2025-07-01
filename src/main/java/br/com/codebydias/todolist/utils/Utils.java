@@ -14,6 +14,7 @@ public class Utils {
 
     //Pegar tudo que for null para atribuir ao getNullProperty
     
+    // OQ ENTENDI!: ele considera oq manda mo body e oq for null mantem o dado antigo faz um put parcial porem existe patch para esse caso
     
     public static void copyNoNullProperties(Object source, Object target){
     BeanUtils.copyProperties(source, target, getNullProperty(source));
