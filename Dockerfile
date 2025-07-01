@@ -1,4 +1,4 @@
-FROM ubuntu:lastest as Build
+FROM ubuntu:lastest as build
 
 RUN apt-get update
 RUN apt-get install openjdk-17 -y
